@@ -46,7 +46,7 @@ from pyspark.sql import SparkSession
 import dbldatagen as dg
 import dbldatagen.distributions as dist
 from dbldatagen import FakerTextFactory, DataGenerator, fakerText
-from faker.providers import bank, credit_card, currency
+from faker.providers import bank, credit_card, currency, person, address, job, phone_number, passport
 import cml.data_v1 as cmldata
 
 
@@ -84,7 +84,12 @@ class CrimeDataGen:
                     .withColumn("robos_vehiculo", "float", minValue=0, maxValue=3, random=True)
                     .withColumn("vandalismo", "float", minValue=0, maxValue=3, random=True)
                     .withColumn("incendios_provocado", "float", minValue=0, maxValue=10, random=True)
-                    .withColumn("quejas_por_ruido", "float", minValue=0, maxValue=10, random=True)
+                    .withColumn("longitud", "float", minValue=6.2456, maxValue=6.2496, random=True)
+                    .withColumn("latitud", "float", minValue=-75.5629, maxValue=-75.5658, random=True)
+                    .withColumn("homicidio", "float", minValue=0, maxValue=2, random=True)
+                    .withColumn("abusos_infantil", "float", minValue=0, maxValue=3, random=True)
+                    .withColumn("abusos_domestico", "float", minValue=0, maxValue=10, random=True)
+                    .withColumn("estafas", "float", minValue=0, maxValue=10, random=True)
                     .withColumn("reincidente", "string", values=["0", "1"], weights=[9, 1], random=True)
                     )
         df = fakerDataspec.build()
