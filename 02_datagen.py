@@ -73,7 +73,7 @@ class CrimeDataGen:
 
         fakerDataspec = (DataGenerator(spark, rows=data_rows, partitions=partitions_requested)
                     .withColumn("nombre", text=FakerTextES("name"))
-                    .withColumn("id", text=FakerTextES("passport_number"))
+                    .withColumn("docu_ident", text=FakerTextES("passport_number"))
                     .withColumn("edad", "float", minValue=10, maxValue=100, random=True)
                     .withColumn("profession", text=FakerTextES("job"))
                     .withColumn("num_tel", text=FakerTextES("phone_number"))
