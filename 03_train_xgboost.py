@@ -52,21 +52,21 @@ import pyspark.pandas as ps
 
 USERNAME = os.environ["PROJECT_OWNER"]
 DBNAME = "default"
-CONNECTION_NAME = "bacpoccdp"
+CONNECTION_NAME = "col1-aw-dl"
 
 DATE = date.today()
-EXPERIMENT_NAME = "xgb-cc-fraud-{0}-{1}".format(USERNAME, DATE)
+EXPERIMENT_NAME = "xgb-reinc-{0}-{1}".format(USERNAME, DATE)
 
 mlflow.set_experiment(EXPERIMENT_NAME)
 
 conn = cmldata.get_connection(CONNECTION_NAME)
 spark = conn.get_spark_session()
 
-df_from_sql = ps.read_table('{0}.CC_TRX_{1}'.format(DBNAME, USERNAME))
+df_from_sql = ps.read_table('{0}.crimen_{1}'.format(DBNAME, USERNAME))
 df = df_from_sql.to_pandas()
 
 test_size = 0.3
-X_train, X_test, y_train, y_test = train_test_split(df.drop("fraud_trx", axis=1), df["fraud_trx"], test_size=test_size)
+X_train, X_test, y_train, y_test = train_test_split(df.drop("reincidente", axis=1), df["reincidente"], test_size=test_size)
 
 with mlflow.start_run():
 

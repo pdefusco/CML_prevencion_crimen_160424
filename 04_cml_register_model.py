@@ -81,10 +81,9 @@ class ModelRegistration():
 
         return api_response
 
-
-username = os.environ["PROJECT_OWNER"]
+USERNAME = os.environ["PROJECT_OWNER"]
 date = date.today()
-experimentName = "xgb-cc-fraud-{0}-{1}".format(username, date)
+experimentName = "xgb-reinc-{0}-{1}".format(username, date)
 
 experimentId = mlflow.get_experiment_by_name(experimentName).experiment_id
 runsDf = mlflow.search_runs(experimentId, run_view_type=1)

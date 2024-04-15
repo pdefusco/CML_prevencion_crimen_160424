@@ -50,9 +50,9 @@ from faker.providers import bank, credit_card, currency
 import cml.data_v1 as cmldata
 
 
-class BankDataGen:
+class CrimeDataGen:
 
-    '''Class to Generate Banking Data'''
+    '''Class to Generate Crime Data'''
 
     def __init__(self, username, dbname, connectionName):
         self.username = username
@@ -60,36 +60,35 @@ class BankDataGen:
         self.connectionName = connectionName
 
 
-    def dataGen(self, spark, shuffle_partitions_requested = 5, partitions_requested = 2, data_rows = 10000):
+    def dataGen(self, spark, shuffle_partitions_requested = 2, partitions_requested = 2, data_rows = 10000):
         """
         Method to create credit card transactions in Spark Df
         """
 
         # setup use of Faker
-        FakerTextUS = FakerTextFactory(locale=['en_US'], providers=[bank])
+        FakerTextES = FakerTextFactory(locale=['es_ES'], providers=[person, address, job, phone_number, passport])
 
         # partition parameters etc.
         spark.conf.set("spark.sql.shuffle.partitions", shuffle_partitions_requested)
 
         fakerDataspec = (DataGenerator(spark, rows=data_rows, partitions=partitions_requested)
-                    .withColumn("age", "float", minValue=10, maxValue=100, random=True)
-                    .withColumn("credit_card_balance", "float", minValue=100, maxValue=30000, random=True)
-                    .withColumn("bank_account_balance", "float", minValue=0.01, maxValue=100000, random=True)
-                    .withColumn("mortgage_balance", "float", minValue=0.01, maxValue=1000000, random=True)
-                    .withColumn("sec_bank_account_balance", "float", minValue=0.01, maxValue=100000, random=True)
-                    .withColumn("savings_account_balance", "float", minValue=0.01, maxValue=500000, random=True)
-                    .withColumn("sec_savings_account_balance", "float", minValue=0.01, maxValue=500000, random=True)
-                    .withColumn("total_est_nworth", "float", minValue=10000, maxValue=500000, random=True)
-                    .withColumn("primary_loan_balance", "float", minValue=0.01, maxValue=5000, random=True)
-                    .withColumn("secondary_loan_balance", "float", minValue=0.01, maxValue=500000, random=True)
-                    .withColumn("uni_loan_balance", "float", minValue=0.01, maxValue=10000, random=True)
-                    .withColumn("longitude", "float", minValue=-180, maxValue=180, random=True)
-                    .withColumn("latitude", "float", minValue=-90, maxValue=90, random=True)
-                    .withColumn("transaction_amount", "float", minValue=0.01, maxValue=30000, random=True)
-                    .withColumn("fraud_trx", "string", values=["0", "1"], weights=[9, 1], random=True)
+                    .withColumn("nombre", text=FakerTextES("name"))
+                    .withColumn("id", text=FakerTextES("passport_number"))
+                    .withColumn("edad", "float", minValue=10, maxValue=100, random=True)
+                    .withColumn("profession", text=FakerTextES("job"))
+                    .withColumn("num_tel", text=FakerTextES("phone_number"))
+                    .withColumn("quejas_por_ruido", "float", minValue=0, maxValue=3, random=True)
+                    .withColumn("robos", "float", minValue=0, maxValue=5, random=True)
+                    .withColumn("robos_mano_armada", "float", minValue=0, maxValue=5, random=True)
+                    .withColumn("asaltos", "float", minValue=0, maxValue=4, random=True)
+                    .withColumn("robos_vehiculo", "float", minValue=0, maxValue=3, random=True)
+                    .withColumn("vandalismo", "float", minValue=0, maxValue=3, random=True)
+                    .withColumn("incendios_provocado", "float", minValue=0, maxValue=10, random=True)
+                    .withColumn("quejas_por_ruido", "float", minValue=0, maxValue=10, random=True)
+                    .withColumn("reincidente", "string", values=["0", "1"], weights=[9, 1], random=True)
                     )
         df = fakerDataspec.build()
-        df = df.withColumn("fraud_trx", df["fraud_trx"].cast(IntegerType()))
+        df = df.withColumn("reincidente", df["reincidente"].cast(IntegerType()))
 
         return df
 
@@ -118,11 +117,11 @@ class BankDataGen:
         """
 
         try:
-            df.writeTo("{0}.CC_TRX_{1}".format(self.dbname, self.username))\
+            df.writeTo("{0}.crimen_{1}".format(self.dbname, self.username))\
               .using("iceberg").tableProperty("write.format.default", "parquet").append()
 
         except:
-            df.writeTo("{0}.CC_TRX_{1}".format(self.dbname, self.username))\
+            df.writeTo("{0}.crimen_{1}".format(self.dbname, self.username))\
                 .using("iceberg").tableProperty("write.format.default", "parquet").createOrReplace()
 
 
@@ -138,10 +137,10 @@ def main():
 
     USERNAME = os.environ["PROJECT_OWNER"]
     DBNAME = "default"
-    CONNECTION_NAME = "bacpoccdp"
+    CONNECTION_NAME = "col1-aw-dl"
 
     # Instantiate BankDataGen class
-    dg = BankDataGen(USERNAME, DBNAME, CONNECTION_NAME)
+    dg = CrimeDataGen(USERNAME, DBNAME, CONNECTION_NAME)
 
     # Create CML Spark Connection
     spark = dg.createSparkConnection()
