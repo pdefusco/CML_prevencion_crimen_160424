@@ -65,6 +65,9 @@ spark = conn.get_spark_session()
 df_from_sql = ps.read_table('{0}.crimen_{1}'.format(DBNAME, USERNAME))
 df = df_from_sql.to_pandas()
 
+df = df[["quejas_por_ruido", "robos", "robos_mano_armada", "asaltos", "robos_vehiculo", "vandalismo", "incendios_provocado", \
+        "longitud", "latitud", "homicidio", "abusos_infantil", "abusos_domestico", "estafas", "reincidente"]]
+
 test_size = 0.3
 X_train, X_test, y_train, y_test = train_test_split(df.drop("reincidente", axis=1), df["reincidente"], test_size=test_size)
 

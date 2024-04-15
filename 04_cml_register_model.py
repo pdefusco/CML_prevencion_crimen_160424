@@ -81,7 +81,7 @@ class ModelRegistration():
 
         return api_response
 
-USERNAME = os.environ["PROJECT_OWNER"]
+username = os.environ["PROJECT_OWNER"]
 date = date.today()
 experimentName = "xgb-reinc-{0}-{1}".format(username, date)
 
@@ -94,7 +94,7 @@ experimentRunId = runsDf.iloc[-1]['run_id']
 modelReg = ModelRegistration(username, experimentName)
 
 modelPath = "artifacts"
-modelName = "FraudCLF-" + username
+modelName = "CrimenCLF-" + username
 
 registeredModelResponse = modelReg.registerModelFromExperimentRun(modelName, experimentId, experimentRunId, modelPath)
 
